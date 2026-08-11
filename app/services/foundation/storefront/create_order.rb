@@ -7,10 +7,16 @@ module Foundation
       class Unavailable < StandardError; end
       MAX_DISTINCT_ITEMS = 20
 
-      def self.call(cart:, email:, user:, legal_assent:, ip:, user_agent:, checkout_nonce: SecureRandom.urlsafe_base64(32))
+      SHIPPING_FIELDS = %i[
+        shipping_name shipping_line1 shipping_line2
+        shipping_city shipping_region shipping_postal_code shipping_country
+      ].freeze
+
+      def self.call(cart:, email:, user:, legal_assent:, ip:, user_agent:, checkout_nonce: SecureRandom.urlsafe_base64(32), shipping_address: nil)
         raise InvalidCart, "Your cart is empty." if cart.blank?
         raise InvalidCart, "You must accept the Terms and Privacy Policy." unless legal_assent == "1" || legal_assent == true
 
+        shipping = normalize_shipping(shipping_address)
         checkout_key_digest = checkout_digest(checkout_nonce)
         existing = Order.find_by(checkout_key_digest: checkout_key_digest)
         return existing if existing
@@ -49,7 +55,8 @@ module Foundation
             legal_accepted_at: Time.current,
             reservation_expires_at: 45.minutes.from_now,
             acceptance_ip: ip.to_s.presence,
-            acceptance_user_agent: user_agent.to_s.first(500).presence
+            acceptance_user_agent: user_agent.to_s.first(500).presence,
+            **shipping
           )
 
           products.values.sort_by(&:id).each do |product|
@@ -94,6 +101,23 @@ module Foundation
         end
       end
       private_class_method :normalize_cart
+
+      def self.normalize_shipping(address)
+        return {} if address.blank?
+
+        normalized = SHIPPING_FIELDS.to_h { |field| [field, address[field].to_s.strip.presence] }
+        required = %i[shipping_name shipping_line1 shipping_city shipping_region shipping_postal_code shipping_country]
+        missing = required.reject { |field| normalized[field].present? }
+        raise InvalidCart, "Shipping address is incomplete: #{missing.join(', ')}." unless missing.empty?
+        raise InvalidCart, "Address line 1 cannot exceed 160 characters." if normalized[:shipping_line1].length > 160
+        raise InvalidCart, "City cannot exceed 120 characters." if normalized[:shipping_city].length > 120
+        raise InvalidCart, "Region cannot exceed 120 characters." if normalized[:shipping_region].length > 120
+        raise InvalidCart, "Postal code cannot exceed 24 characters." if normalized[:shipping_postal_code].length > 24
+        raise InvalidCart, "Country cannot exceed 64 characters." if normalized[:shipping_country].length > 64
+
+        normalized
+      end
+      private_class_method :normalize_shipping
 
       def self.checkout_digest(checkout_nonce)
         Digest::SHA256.hexdigest(checkout_nonce.to_s)
