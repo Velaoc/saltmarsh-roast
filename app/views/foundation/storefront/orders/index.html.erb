@@ -1,0 +1,38 @@
+<% title "Your orders" %>
+<section class="md-section" aria-labelledby="orders-title">
+  <div class="md-section__inner">
+    <p class="md-section__eyebrow">Saltmarsh Roast</p>
+    <div class="storefront-heading-row">
+      <h1 id="orders-title">Your orders</h1>
+      <%= link_to "Back to shop", storefront_products_path, class: "md-button md-button--tonal" %>
+    </div>
+    <% if @orders.any? %>
+      <div class="md-stack">
+        <% @orders.each do |order| %>
+          <article class="md-card md-card--outlined">
+            <div class="md-stack">
+              <div class="storefront-heading-row">
+                <div>
+                  <h2>Order <%= order.public_reference %></h2>
+                  <p><%= l(order.created_at, format: :long) %> · <%= order.state %></p>
+                </div>
+                <strong><%= storefront_money(order.total_cents, order.currency) %></strong>
+              </div>
+              <ul class="storefront-line-items">
+                <% order.line_items.each do |item| %>
+                  <li><span><%= item.quantity %> × <%= item.name %></span><span><%= storefront_money(item.line_total_cents, item.currency) %></span></li>
+                <% end %>
+              </ul>
+              <p>Ship to: <%= order.shipping_line1 %>, <%= order.shipping_city %>, <%= order.shipping_country %></p>
+              <%= link_to "View receipt", storefront_order_path(order.public_reference), class: "md-button md-button--outlined" %>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="md-card md-card--filled"><h2>No orders yet</h2><p>When you place an order while signed in, it will show up here.</p>
+        <%= link_to "Browse the shop", storefront_products_path, class: "md-button md-button--filled" %>
+      </div>
+    <% end %>
+  </div>
+</section>
