@@ -71,7 +71,7 @@ module Foundation
       end
 
       def shipping_address_params
-        checkout_params.permit(
+        params.fetch(:checkout, {}).permit(
           :shipping_name, :shipping_line1, :shipping_line2,
           :shipping_city, :shipping_region, :shipping_postal_code, :shipping_country
         ).to_h.symbolize_keys
