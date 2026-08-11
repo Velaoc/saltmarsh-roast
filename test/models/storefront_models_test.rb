@@ -43,7 +43,8 @@ class StorefrontModelsTest < ActiveSupport::TestCase
     attributes = {
       cart: { product.id => 2 }, email: "replay@example.com", user: nil,
       legal_assent: "1", ip: "192.0.2.5", user_agent: "Replay test",
-      checkout_nonce: "server-generated-cart-nonce"
+      checkout_nonce: "server-generated-cart-nonce",
+      shipping_address: StorefrontTestHelpers::SHIPPING_ADDRESS
     }
     first = Foundation::Storefront::CreateOrder.call(**attributes)
     second = Foundation::Storefront::CreateOrder.call(**attributes)
@@ -60,7 +61,8 @@ class StorefrontModelsTest < ActiveSupport::TestCase
     attributes = {
       cart: { product.id => 1 }, email: "queue@example.com", user: nil,
       legal_assent: "1", ip: "192.0.2.6", user_agent: "Queue test",
-      checkout_nonce: "durable-replay-nonce"
+      checkout_nonce: "durable-replay-nonce",
+      shipping_address: StorefrontTestHelpers::SHIPPING_ADDRESS
     }
     first = with_stubbed_singleton_method(Foundation::Storefront::ExpireReservationJob, :set, replacement) do
       Foundation::Storefront::CreateOrder.call(**attributes)
@@ -108,7 +110,7 @@ class StorefrontModelsTest < ActiveSupport::TestCase
 
   test "legal assent and quantity bounds fail closed" do
     product = create_storefront_product
-    base = { cart: { product.id => 1 }, email: "guest@example.com", user: nil, ip: nil, user_agent: nil }
+    base = { cart: { product.id => 1 }, email: "guest@example.com", user: nil, ip: nil, user_agent: nil, shipping_address: StorefrontTestHelpers::SHIPPING_ADDRESS }
     assert_raises(Foundation::Storefront::CreateOrder::InvalidCart) do
       Foundation::Storefront::CreateOrder.call(**base, legal_assent: "0")
     end
@@ -290,7 +292,8 @@ class StorefrontCheckoutConcurrencyTest < ActiveSupport::TestCase
     {
       cart: { @product.id => 1 }, email: "concurrent@example.com", user: nil,
       legal_assent: "1", ip: "192.0.2.77", user_agent: "Concurrency test",
-      checkout_nonce: concurrent_nonce
+      checkout_nonce: concurrent_nonce,
+      shipping_address: StorefrontTestHelpers::SHIPPING_ADDRESS
     }
   end
 end
