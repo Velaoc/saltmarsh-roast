@@ -45,7 +45,7 @@ class StorefrontFlowsTest < ActionDispatch::IntegrationTest
     product = create_storefront_product(inventory_quantity: 2)
     with_env("VELA_HOLODEX_PREVIEW" => "1", "STOREFRONT_PREVIEW_PAYMENT_MODE" => "simulator") do
       post items_storefront_cart_path(product), params: { quantity: 1 }
-      post storefront_checkout_path, params: { checkout: { email: "guest@example.com", legal_assent: "1" } }
+      post storefront_checkout_path, params: { checkout: { email: "guest@example.com", legal_assent: "1", shipping_name: "Test Buyer", shipping_line1: "1 Harbor Way", shipping_line2: "Apt 2", shipping_city: "Saltmarsh", shipping_region: "ME", shipping_postal_code: "04001", shipping_country: "US" } }
       order = Foundation::Storefront::Order.order(:id).last
       assert_redirected_to %r{/storefront/simulate/#{order.public_reference}}
       token = Rack::Utils.parse_query(URI.parse(response.location).query).fetch("access_token")
@@ -198,7 +198,7 @@ class StorefrontFlowsTest < ActionDispatch::IntegrationTest
     product = create_storefront_product
     with_env("VELA_HOLODEX_PREVIEW" => "1", "STOREFRONT_PREVIEW_PAYMENT_MODE" => "simulator") do
       post items_storefront_cart_path(product), params: { quantity: 1 }
-      post storefront_checkout_path, params: { checkout: { email: "expiry@example.com", legal_assent: "1" } }
+      post storefront_checkout_path, params: { checkout: { email: "expiry@example.com", legal_assent: "1", shipping_name: "Test Buyer", shipping_line1: "1 Harbor Way", shipping_city: "Saltmarsh", shipping_region: "ME", shipping_postal_code: "04001", shipping_country: "US" } }
     end
     order = Foundation::Storefront::Order.order(:id).last
     travel_to(order.reservation_expires_at + 1.second) do
