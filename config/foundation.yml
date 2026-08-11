@@ -56,7 +56,10 @@ shared:
 
   # Exact lowercase HTTPS hosts permitted for browser-rendered external
   # product images. Empty (the safe default) requires Active Storage uploads.
-  storefront_external_image_hosts: []
+  # The demo catalog renders stock photography from Unsplash; a production
+  # roaster replaces these with uploads or a CDN it controls.
+  storefront_external_image_hosts:
+    - "images.unsplash.com"
 
   # Host capacity ceilings for /healthcheck disk and memory probes (percent used).
   # Probes pass with an informational note when the platform cannot report figures.
