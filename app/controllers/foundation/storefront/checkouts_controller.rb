@@ -19,6 +19,7 @@ module Foundation
           email: checkout_params[:email],
           user: current_user,
           legal_assent: checkout_params[:legal_assent],
+          shipping_address: shipping_address_params,
           ip: request.remote_ip,
           user_agent: request.user_agent,
           checkout_nonce: storefront_checkout_nonce
@@ -67,6 +68,13 @@ module Foundation
 
       def checkout_params
         params.fetch(:checkout, {}).permit(:email, :legal_assent)
+      end
+
+      def shipping_address_params
+        checkout_params.permit(
+          :shipping_name, :shipping_line1, :shipping_line2,
+          :shipping_city, :shipping_region, :shipping_postal_code, :shipping_country
+        ).to_h.symbolize_keys
       end
 
       def pending_checkout
