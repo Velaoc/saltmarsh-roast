@@ -47,7 +47,7 @@ Requires Ruby, PostgreSQL, and the usual Rails toolchain. See `bin/setup` if pre
 
 ## Demo
 
-Six coffees with roast names, origins, roast levels, tasting notes, weights, prices, and photos; a couple of seeded orders for the demo account so order history is visible.
+Six coffees with roast names, origins, roast levels, tasting notes, weights, prices, and photos. Order history fills in as signed-in customers place orders.
 
 ## Deploy notes
 
