@@ -93,10 +93,17 @@ module StorefrontTestHelpers
     }.merge(attributes))
   end
 
-  def create_storefront_order(product: create_storefront_product, quantity: 1, email: "guest@example.com", user: nil)
+  SHIPPING_ADDRESS = {
+    shipping_name: "Test Buyer", shipping_line1: "1 Harbor Way",
+    shipping_line2: "Apt 2", shipping_city: "Saltmarsh",
+    shipping_region: "ME", shipping_postal_code: "04001", shipping_country: "US"
+  }.freeze
+
+  def create_storefront_order(product: create_storefront_product, quantity: 1, email: "guest@example.com", user: nil, shipping_address: SHIPPING_ADDRESS)
     Foundation::Storefront::CreateOrder.call(
       cart: { product.id.to_s => quantity.to_s }, email: email, user: user,
-      legal_assent: "1", ip: "192.0.2.10", user_agent: "Storefront test"
+      legal_assent: "1", ip: "192.0.2.10", user_agent: "Storefront test",
+      shipping_address: shipping_address
     )
   end
 end
