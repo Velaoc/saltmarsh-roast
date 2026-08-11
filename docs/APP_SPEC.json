@@ -1,0 +1,73 @@
+{
+  "name": "Saltmarsh Roast",
+  "purpose": "Online store for a small coastal coffee roaster: browse a catalog of roasted coffees with photos and prices, build a cart, check out as a guest, and revisit past orders.",
+  "actors": [
+    "Customer (guest checkout or signed-in account)",
+    "Store admin (manage products and orders)"
+  ],
+  "entities": [
+    {
+      "name": "Product",
+      "relationships": [
+        "has many order_items",
+        "belongs to store catalog"
+      ]
+    },
+    {
+      "name": "Order",
+      "relationships": [
+        "has many order_items",
+        "optionally belongs to a customer account",
+        "stores customer email for guest checkout",
+        "snapshots shipping name and address for physical fulfillment"
+      ]
+    },
+    {
+      "name": "OrderItem",
+      "relationships": [
+        "belongs to order",
+        "belongs to product",
+        "snapshots name, unit price, quantity at purchase time"
+      ]
+    },
+    {
+      "name": "CustomerAccount",
+      "relationships": [
+        "has many orders",
+        "optional — guest checkout doesn't require one"
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "name": "Browse catalog",
+      "description": "Visitor sees products with photos, roast profile, origin, tasting notes, and price."
+    },
+    {
+      "name": "Add to cart",
+      "description": "Visitor adds quantities to a cart without an account."
+    },
+    {
+      "name": "Checkout",
+      "description": "Guest checkout collects an email and a shipping address; order completes through the local test simulator in the preview."
+    },
+    {
+      "name": "View past orders",
+      "description": "Signed-in customers see their order history; guests reach their receipt via a signed expiring access link."
+    },
+    {
+      "name": "Admin manage store",
+      "description": "Admin creates/edits products and views orders including shipping addresses."
+    }
+  ],
+  "modules": [
+    "storefront"
+  ],
+  "integrations": [
+    {
+      "name": "Stripe",
+      "demo_adapter": true
+    }
+  ],
+  "seed_demo": "Six coffees with roast names, origins, roast levels, tasting notes, weights, prices, and photos; a couple of seeded orders for the demo account so order history is visible."
+}
