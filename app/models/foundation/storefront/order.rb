@@ -34,6 +34,13 @@ module Foundation
         numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validates :terms_version, :privacy_version, :legal_accepted_at, :reservation_expires_at, presence: true
       validates :stripe_session_id, :provider_payment_id, uniqueness: true, allow_nil: true
+      validates :shipping_name, :shipping_line1, :shipping_city, :shipping_region,
+        :shipping_postal_code, :shipping_country,
+        presence: true, allow_blank: false, on: :create
+      validates :shipping_name, :shipping_line1, :shipping_line2, length: { maximum: 160 }
+      validates :shipping_city, :shipping_region, length: { maximum: 120 }
+      validates :shipping_postal_code, length: { maximum: 24 }
+      validates :shipping_country, length: { maximum: 64 }
       validate :totals_match
 
       def transition_to!(new_state, at: Time.current)
@@ -43,6 +50,21 @@ module Foundation
         attributes = { state: new_state }
         attributes["#{new_state}_at"] = at if has_attribute?("#{new_state}_at")
         update!(attributes)
+      end
+
+      def shipping_address_present?
+        shipping_name.present? && shipping_line1.present? && shipping_city.present? &&
+          shipping_region.present? && shipping_postal_code.present? && shipping_country.present?
+      end
+
+      def formatted_shipping_address
+        [
+          shipping_name,
+          shipping_line1,
+          shipping_line2.presence,
+          [ shipping_city, shipping_region, shipping_postal_code ].reject(&:blank?).join(", "),
+          shipping_country
+        ].compact.join("\n")
       end
 
       class InvalidTransition < StandardError; end
