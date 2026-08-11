@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_11_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_11_060001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -631,6 +631,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_140000) do
     t.string "public_reference", null: false
     t.datetime "receipt_queued_at"
     t.datetime "receipt_sent_at"
+    t.string "shipping_city"
+    t.string "shipping_country"
+    t.string "shipping_line1"
+    t.string "shipping_line2"
+    t.string "shipping_name"
+    t.string "shipping_postal_code"
+    t.string "shipping_region"
     t.datetime "refunded_at"
     t.datetime "reservation_expires_at", null: false
     t.boolean "simulated", default: false, null: false
