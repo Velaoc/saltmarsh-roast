@@ -34,10 +34,16 @@ class StorefrontGuestCheckoutTest < ApplicationSystemTestCase
     click_on "Continue to checkout"
 
     assert_current_path storefront_checkout_path
-    assert_selector "h1", text: "Contact and consent"
+    assert_selector "h1", text: "Contact, shipping, and consent"
 
     within ".md-auth-card" do
       assert_field "checkout[email]", type: "email"
+      assert_field "checkout[shipping_name]"
+      assert_field "checkout[shipping_line1]"
+      assert_field "checkout[shipping_city]"
+      assert_field "checkout[shipping_region]"
+      assert_field "checkout[shipping_postal_code]"
+      assert_field "checkout[shipping_country]"
       # The input itself is deliberately reduced to 1px and transparent by the
       # design system, so presence alone would still pass with nothing on
       # screen. Assert the control the shopper actually sees and clicks, and
