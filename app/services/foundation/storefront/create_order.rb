@@ -105,7 +105,7 @@ module Foundation
       def self.normalize_shipping(address)
         return {} if address.blank?
 
-        normalized = SHIPPING_FIELDS.to_h { |field| [field, address[field].to_s.strip.presence] }
+        normalized = SHIPPING_FIELDS.to_h { |field| [ field, address[field].to_s.strip.presence ] }
         required = %i[shipping_name shipping_line1 shipping_city shipping_region shipping_postal_code shipping_country]
         missing = required.reject { |field| normalized[field].present? }
         raise InvalidCart, "Shipping address is incomplete: #{missing.join(', ')}." unless missing.empty?
