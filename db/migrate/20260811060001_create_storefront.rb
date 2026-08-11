@@ -50,6 +50,13 @@ class CreateStorefront < ActiveRecord::Migration[8.1]
       t.datetime :refunded_at
       t.datetime :receipt_queued_at
       t.datetime :receipt_sent_at
+      t.string :shipping_name
+      t.string :shipping_line1
+      t.string :shipping_line2
+      t.string :shipping_city
+      t.string :shipping_region
+      t.string :shipping_postal_code
+      t.string :shipping_country
       t.timestamps
 
       t.index :public_reference, unique: true
