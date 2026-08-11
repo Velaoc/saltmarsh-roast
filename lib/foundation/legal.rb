@@ -7,8 +7,8 @@ module Foundation
     TERMS_VERSION = "v2"
     TERMS_UPDATED_ON = Date.new(2026, 8, 10)
 
-    PRIVACY_VERSION = "v3"
-    PRIVACY_UPDATED_ON = Date.new(2026, 8, 10)
+    PRIVACY_VERSION = "v4"
+    PRIVACY_UPDATED_ON = Date.new(2026, 8, 11)
 
     # Human-visible identifier rendered on the document, e.g. "v1 — 2026-08-10".
     def self.terms_label
